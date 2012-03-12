@@ -68,17 +68,17 @@ COMMAND
   end
 
   desc "Start the application services"
-  task :start, :roles => :app do
+  task :start , :roles => :app do
     sudo "start #{ application }-#{ app_env }"
   end
 
   desc "Stop the application services"
-  task :stop, :roles => :app do
+  task :stop , :roles => :app do
     sudo "stop #{ application }-#{ app_env }"
   end
 
   desc "Restart the application services"
-  task :restart, :roles => :app do
+  task :restart , :roles => :app do
     run "sudo restart #{ application }-#{ app_env }"
   end
 end
@@ -91,8 +91,8 @@ namespace :rvm do
 end
 
 before "deploy:setup"  , "deploy:create_deploy_to_location"
-before "deploy:update" , "foreman:link_env_file"
 
 after  "deploy"        , "rvm:trust_rvmrc"
 after  "deploy:setup"  , "deploy:update_deploy_to_permissions"
+after  "deploy:update" , "foreman:link_env_file"
 after  "deploy:update" , "foreman:export"
