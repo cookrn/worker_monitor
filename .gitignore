@@ -1,0 +1,5 @@
+.bundle
+.env
+.rvmrc
+config/deploy/*.rb
+vendor/bundle

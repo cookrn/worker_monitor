@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+original_args=$@
+exec exe/_rvm_foreman_run cap $original_args
