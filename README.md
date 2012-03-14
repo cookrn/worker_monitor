@@ -34,6 +34,7 @@ These keys will be set automatically based on your setup. Feel free to override 
 
 * `CONFIG_DEPLOY_DEFAULT_STAGE` -- The default deployment stage. This should be configured in a Ruby file. For a stage named "demo", define your stage configuration in `config/deploy/demo.rb`. This key will be set automatically if you only have one stage. If you have more than one stage and you do NOT set this key, an error will be raised.
 * `CONFIG_DEPLOY_STAGES` -- A comma separated list of the available stages.
+* `CONFIG_REDIS_CONNECTION_STRING` -- A redis connection host/IP and port e.g. "1.2.3.4:6379" or "host.com:6379"
 
 ## Defining Stages
 
