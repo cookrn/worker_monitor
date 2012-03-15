@@ -4,7 +4,7 @@ This is an example, deploy-ready application to setup a password-protected Resqu
 
 ## Caveats
 
-This is setup to use [RVM](https://rvm.beginrescueend.com/), [Foreman](http://ddollar.github.com/foreman/), [Bundler](http://gembundler.com/) and [Capistrano](http://capify.org/). It is also setup to have staged deployments using `capistrano-ext`. The default stage is `dev`.
+This is setup to use [RVM](https://rvm.beginrescueend.com/), [Foreman](http://ddollar.github.com/foreman/), [Bundler](http://gembundler.com/) and [Capistrano](http://capify.org/). It is also setup to have staged deployments using `capistrano-ext`. The default stage is `dev`. See the `Nginx` info below regarding the ideal reverse proxy deployment setup.
 
 RVM is setup to expect a multi-user install.
 
@@ -63,6 +63,46 @@ If you wish to override this automatic behavior, set the `CONFIG_DEPLOY_STAGES` 
 * Run `exe/cap deploy`
 
 This application is meant to be run behind a reverse proxy such as `Nginx`. You will need to complete additional configuration for said reverse proxy to pass requests to your application.
+
+### An Example SSL-Enabled Nginx Config
+
+```
+upstream production_upstream {
+  server 0.0.0.0:8000;
+}
+
+server {
+  listen              443;
+  server_name         my-worker-monitor.example.com;
+  ssl                 on;
+  ssl_certificate     /path/to/ssl/xxxxxxxx.crt;
+  ssl_certificate_key /path/to/ssl/xxxxxxxx.key;
+
+  if ($request_method !~ ^(GET|DELETE|HEAD|OPTIONS|PATCH|POST|PUT)$ ){
+    return 405;
+  }
+
+  location / {
+    proxy_set_header Host              $http_host;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Real-IP         $remote_addr;
+    proxy_set_header X-Url-Scheme      $scheme;
+    proxy_max_temp_file_size 0;
+    proxy_redirect off;
+    proxy_pass http://production_upstream;
+  }
+}
+
+server {
+  listen      80;
+  server_name my-worker-monitor.example.com;
+
+  location / {
+    rewrite ^ https://my-worker-monitor.server.com$request_uri? permanent;
+  }
+}
+```
 
 ## Recommendations
 
